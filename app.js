@@ -189,7 +189,7 @@
   // ---------- camera ----------
   const OV = [487, 300];
   // [progress, focus (index or 'ov'), tilt, zoom]
-  const KEYS = [[0, 'ov', 0, 1], [.11, 'ov', 0, 1], [.25, 'ov', 48, 1.04], [.33, 0, 54, 2.4], [.40, 0, 54, 2.5], [.50, 1, 54, 2.4], [.58, 1, 54, 2.5], [.68, 2, 54, 2.4], [.76, 2, 54, 2.5], [.89, 'ov', 36, 1], [1, 'ov', 36, 1]];
+  const KEYS = [[0, 'ov', 0, 1], [.11, 'ov', 0, 1], [.25, 'ov', 48, 1.04], [.33, 0, 54, 2.4], [.40, 0, 54, 2.5], [.50, 1, 54, 2.4], [.58, 1, 54, 2.5], [.68, 2, 54, 2.4], [.76, 2, 54, 2.5], [.89, 'ov', 36, .86], [1, 'ov', 36, .86]];
   const focusPt = f => f === 'ov' ? OV : P[f];
   function camAt(p) {
     let k = 0; while (k < KEYS.length - 2 && p > KEYS[k + 1][0]) k++;
@@ -252,11 +252,11 @@
     const s = fit * c.z * (mob ? 1.15 : 1);
     const stopI = p > .29 && p < .45 ? 0 : p >= .45 && p < .63 ? 1 : p >= .63 && p < .82 ? 2 : -1;
     const atOver = p > .86;
-    const ax = mob ? W / 2 : W * (stopI >= 0 ? .4 : atOver ? .4 : .5);
-    const ay = mob ? 60 + (H - 60) * (stopI >= 0 || atOver ? .3 : .45) : 60 + (H - 60) * .5;
+    const ax = mob ? W / 2 : W * (stopI >= 0 ? .4 : atOver ? .33 : .5);
+    const ay = mob ? 60 + (H - 60) * (stopI >= 0 ? .3 : atOver ? .24 : .45) : 60 + (H - 60) * .5;
     plane.style.setProperty('--tilt', c.tilt + 'deg');
     plane.style.transform = `translate(${ax}px,${ay}px) rotateX(${c.tilt}deg) scale(${s}) translate(${-c.x}px,${-c.y}px)`;
-    const want = mob ? 30 : 44;
+    const want = mob ? 30 * clamp(c.z / 2.4, .45, 1) : 44 * clamp(c.z / 1.6, .7, 1); // labels shrink as the camera pulls back so they never pile up
     plane.style.setProperty('--ls', (want / (44 * s)).toFixed(3));
     mapwrap.style.perspectiveOrigin = `${ax}px ${ay}px`;
 

@@ -245,3 +245,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:90;bac
 .lite .flip img{filter:none}
 .lite .w{filter:none}
 .lite .plane{will-change:transform}
+
+/* keep pins just above the map surface so they don't flicker against it in Safari */
+.pins{transform:translateZ(2px);transform-style:preserve-3d}
+.pin .dot{transform:translateZ(1px)}
