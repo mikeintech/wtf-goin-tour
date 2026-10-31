@@ -55,7 +55,8 @@
     const nd = path(topojson.feature(us, us.objects.nation));
     // thickness: stacked copies below the map read as a slab once it tilts
     const slab = d3.select('#slab');
-    for (let k = 14; k >= 1; k -= 1) slab.append('path').attr('d', nd).attr('transform', `translate(0,${k})`).style('opacity', .5 + (14 - k) / 28);
+    const LITE = document.documentElement.classList.contains('lite');
+    for (let k = 14; k >= 1; k -= LITE ? 3.5 : 1) slab.append('path').attr('d', nd).attr('transform', `translate(0,${k})`).style('opacity', .5 + (14 - k) / 28);
     d3.select('#nation').append('path').attr('class', 'fill').attr('d', nd);
     d3.select('#nation').append('path').attr('class', 'edge').attr('d', nd);
     // each stop's state, lit when the camera arrives

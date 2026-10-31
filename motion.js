@@ -24,7 +24,7 @@
 
     // page-over: the dates sheet slides up over the pinned map, which sinks back and dims
     gsap.to(stage, {
-      scale: .9, filter: 'brightness(.35) blur(2px)', borderRadius: 28, ease: 'none',
+      scale: .9, filter: document.documentElement.classList.contains('lite') ? 'brightness(.35)' : 'brightness(.35) blur(2px)', borderRadius: 28, ease: 'none',
       scrollTrigger: { trigger: '.dates', start: 'top bottom', end: 'top top', scrub: true }
     });
     // same move for the stream sheet over the shop

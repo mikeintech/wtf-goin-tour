@@ -233,3 +233,15 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:90;bac
 .reup{width:100%;max-width:640px;height:auto;justify-self:center;filter:drop-shadow(0 18px 30px rgba(0,0,0,.5))}
 .stream .sub{font-size:18px;margin-top:6px}
 .reup.hand{transform:none}
+
+/* phones: same look, far less GPU work per scroll frame */
+.lite body::after,.lite .fog{display:none}
+.lite #nation path.edge{filter:none;stroke-width:2.2;opacity:.95}
+.lite #hl .st{filter:none}
+.lite #hl .st-edge{filter:none;stroke-width:3.2}
+.lite #route{filter:none}
+.lite #heatmap circle{mix-blend-mode:normal;opacity:.7}
+.lite .belly,.lite .reup{filter:none}
+.lite .flip img{filter:none}
+.lite .w{filter:none}
+.lite .plane{will-change:transform}
