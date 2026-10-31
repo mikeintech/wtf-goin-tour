@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WTF Goin Tour — Unofficial Fan Concept</title>
+<meta name="description" content="An interactive concept for Belly Gang Kushington's WTF Goin Tour: Atlanta, Detroit, Houston. Unofficial fan concept.">
+<meta name="theme-color" content="#0b1420">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.css">
+<link rel="stylesheet" href="style.css?v=11">
+</head>
+<body>
+<a class="skip" href="#dates">Skip to tour dates</a>
+
+<header class="nav">
+  <nav class="nav-l" aria-label="Main">
+    <a href="#dates">Dates</a><a href="#shop">Shop</a><a href="#next">Next city</a>
+  </nav>
+  <a class="logo" href="#top"><img src="img/logo.webp" alt="Belly Gang Kushington" width="400" height="76"></a>
+  <div class="nav-r"><a class="btn-sm" href="#dates">Tickets</a></div>
+</header>
+
+<main>
+<section class="tour" id="top" aria-label="WTF Goin Tour">
+  <div class="stage">
+    <div class="wall" aria-hidden="true"></div>
+
+    <div class="mapwrap" aria-hidden="true">
+      <div class="plane" id="plane">
+        <svg id="map" viewBox="0 0 975 610">
+          <defs>
+            <radialGradient id="heat"><stop offset="0" stop-color="#b9c0c8" stop-opacity=".45"/><stop offset=".35" stop-color="#8a929b" stop-opacity=".16"/><stop offset="1" stop-color="#8a929b" stop-opacity="0"/></radialGradient>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="lift" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="9" stdDeviation="6" flood-color="#000" flood-opacity=".75"/></filter>
+            <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="2.2"/></filter>
+          </defs>
+          <g id="slab"></g><g id="nation"></g>
+          <g id="states"></g>
+          <g id="heatmap"></g><g id="hl"></g>
+          <g id="route" filter="url(#rough)"></g>
+        </svg>
+        <div class="pins" id="pins"></div>
+      </div>
+    </div>
+
+    <div class="fog" aria-hidden="true"><i></i><i></i></div>
+
+    <div class="col col-l" id="colL">
+      <h1 class="words" aria-label="WTF Goin Tour"><span class="slot"><img class="w" src="img/t-wtf.webp" alt=""></span><img class="rule" src="img/rule.webp" alt=""><span class="slot"><img class="w" src="img/t-goin.webp" alt=""></span><img class="rule" src="img/rule.webp" alt=""><span class="slot"><img class="w" src="img/t-tour.webp" alt=""></span><img class="rule" src="img/rule.webp" alt=""></h1>
+    </div>
+
+    <img class="belly" id="belly" src="img/belly.webp" alt="Belly Gang Kushington in a black beanie, gray work jacket and wheat boots" width="511" height="1271">
+
+    <div class="col col-r" id="colR"></div>
+
+    <!-- map interface -->
+    <div class="hud">
+      <div class="hud-tag"><span class="star">✦</span> Tour map</div>
+      <div class="hud-meta">3 cities / 1 movement</div>
+      <nav class="rail" id="rail" aria-label="Jump to a city"></nav>
+      <article class="card" id="card" aria-live="polite"></article>
+      <aside class="ask" id="next" aria-labelledby="askTitle">
+        <h2 id="askTitle">Where should I <br>pull up next?</h2>
+        <form id="askForm" autocomplete="off">
+          <label class="sr" for="askCity">Your city</label>
+          <input id="askCity" list="cityList" placeholder="Drop a city…" maxlength="40">
+          <datalist id="cityList"></datalist>
+          <button aria-label="Add your city">→</button>
+        </form>
+        <p class="ask-msg" id="askMsg" role="status"></p>
+        <h3>Top requests</h3>
+        <ol id="reqList"></ol>
+      </aside>
+      <div class="cue" id="cue"><span>Scroll to dial the city</span><i></i></div>
+    </div>
+  </div>
+</section>
+
+<section class="dates" id="dates" aria-labelledby="datesTitle">
+  <div class="sec-head">
+    <p class="kicker">Follow the route</p>
+    <h2 id="datesTitle" class="distress">Dial the city</h2>
+    <p class="sub">Tickets, set times and a tee you can only get in that city.</p>
+  </div>
+  <div class="stops" id="stops"></div>
+</section>
+
+<section class="shop" id="shop" aria-labelledby="shopTitle">
+  <div class="sec-head">
+    <p class="kicker">Tour merch</p>
+    <h2 id="shopTitle" class="distress">Shop the tour</h2>
+  </div>
+  <div class="shelf" id="shelf"></div>
+  <a class="btn" id="shopAll" href="#">Shop all merch</a>
+</section>
+
+<section class="stream" aria-labelledby="streamTitle">
+  <img class="hand reup" src="img/re-up.webp?v=11" alt="" width="970" height="954">
+  <div>
+    <h2 id="streamTitle" class="sr">Belly Gang Kushington: The Streets Is Yours, The Re-Up</h2>
+    <p class="kicker">New project · Out now</p>
+    <p class="sub">Stream it everywhere music lives.</p>
+    <a class="btn" id="streamBtn" href="#">Stream now</a>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <span>Unofficial fan concept · Not affiliated with Belly Gang Kushington or his team</span>
+  <a href="#top">Back to top ↑</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="tour.js?v=11"></script>
+<script src="motion.js?v=11"></script>
+<script src="app.js?v=11"></script>
+</body>
+</html>
