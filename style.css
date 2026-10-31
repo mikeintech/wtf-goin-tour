@@ -187,10 +187,16 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:90;bac
   .nav-l{display:none}
   .nav{grid-template-columns:auto 1fr}
   .logo img{height:22px}
-  .col{top:calc(54px + 2svh);bottom:auto;height:62svh}
-  .col-l{left:12px;width:27vw;padding-right:6px}
-  .col-r{right:12px;width:27vw;padding-left:6px}
-  .belly{height:calc(100svh - 54px - 3svh)}
+  /* the hero is laid out as the flyer: a 3:4 box centred under the nav,
+     lettering columns ~25% wide each side, Belly ~84% of the box tall in the middle */
+  .stage{--pw:min(100vw - 12px, (100svh - 54px - 16px) * .75);--ph:calc(var(--pw) * 1.331);--px:calc((100vw - var(--pw)) / 2);--py:calc(54px + (100svh - 54px - var(--ph)) / 2)}
+  .col{top:calc(var(--py) + var(--ph) * .035);bottom:auto;height:calc(var(--ph) * .855)}
+  .col-l{left:calc(var(--px) + var(--pw) * .01);width:calc(var(--pw) * .255);padding-right:calc(var(--pw) * .012)}
+  .col-r{right:calc(var(--px) + var(--pw) * .01);width:calc(var(--pw) * .255);padding-left:calc(var(--pw) * .012)}
+  .col-r .slot{padding:0}
+  .belly{height:calc(var(--ph) * .83);bottom:calc(100svh - var(--py) - var(--ph) * .9)}
+  .stage::after{content:'BELLYGANGKUSHINGTON.COM';position:absolute;z-index:5;left:0;right:0;top:calc(var(--py) + var(--ph) * .925);text-align:center;font:400 calc(var(--pw) * .052)/1 Georgia,'Times New Roman',serif;font-weight:700;letter-spacing:.02em;color:#f1eee6;opacity:var(--url,1);transition:opacity .4s;pointer-events:none}
+  .stage.show-map::after{opacity:0}
   .hud{inset:54px 0 0}
   .hud-tag,.hud-meta{top:14px}
   .hud-tag{left:16px}.hud-meta{right:16px}

@@ -241,6 +241,7 @@
     belly.style.opacity = 1 - clamp(tear * 1.25);
     wall.style.transform = `rotateX(${tear * 58}deg) scale(${1 + tear * .25})`;
     wall.style.opacity = 1 - tear;
+    stage.style.setProperty("--url", 1 - clamp(tear * 2));
     mapwrap.style.opacity = clamp(tear * 1.4);
     cue.style.opacity = p < .04 ? 1 : 0;
 
