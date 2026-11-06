@@ -48,7 +48,10 @@
   const plane = $('#plane'), pinsEl = $('#pins');
   pinsEl.innerHTML = S.map((s, i) => `<div class="pin" style="left:${P[i][0]}px;top:${P[i][1]}px"><i class="dot"></i><div class="lab"><b><img src="img/c-${s.code}.webp" alt="" style="height:100%;width:auto"></b><span>${s.city} · ${md(s.date)}</span></div></div>`).join('');
   let hlGroups = [];
-  const pins = [...pinsEl.children], labs = pins.map(p => p.querySelector('.lab')), labB = pins.map(p => p.querySelector('b'));
+  // labels live in a flat layer above the 3D map (moved out of the pins) so the lettering is drawn at screen pixels and stays crisp
+  const labLayer = document.createElement('div'); labLayer.className = 'pinlabs'; document.querySelector('.stage').appendChild(labLayer);
+  const pins = [...pinsEl.children], labs = pins.map(p => labLayer.appendChild(p.querySelector('.lab'))), labB = labs.map(l => l.querySelector('b'));
+  const dots = pins.map(p => p.querySelector('.dot'));
 
   d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3.0.1/states-albers-10m.json').then(us => {
     const path = d3.geoPath();
@@ -189,7 +192,8 @@
   // ---------- camera ----------
   const OV = [487, 300];
   // [progress, focus (index or 'ov'), tilt, zoom]
-  const KEYS = [[0, 'ov', 0, 1], [.11, 'ov', 0, 1], [.25, 'ov', 48, 1.04], [.33, 0, 54, 2.4], [.40, 0, 54, 2.5], [.50, 1, 54, 2.4], [.58, 1, 54, 2.5], [.68, 2, 54, 2.4], [.76, 2, 54, 2.5], [.89, 'ov', 36, .86], [1, 'ov', 36, .86]];
+  // [progress, focus, tilt, zoom, screen anchor x (desktop), screen anchor y (phone)] — the anchor eases with the camera instead of snapping
+  const KEYS = [[0, 'ov', 0, 1, .5, .45], [.11, 'ov', 0, 1, .5, .45], [.25, 'ov', 48, 1.04, .5, .45], [.33, 0, 54, 2.4, .4, .3], [.40, 0, 54, 2.5, .4, .3], [.50, 1, 54, 2.4, .4, .3], [.58, 1, 54, 2.5, .4, .3], [.68, 2, 54, 2.4, .4, .3], [.76, 2, 54, 2.5, .4, .3], [.89, 'ov', 36, .86, .33, .24], [1, 'ov', 36, .86, .33, .24]];
   const focusPt = f => f === 'ov' ? OV : P[f];
   function camAt(p) {
     let k = 0; while (k < KEYS.length - 2 && p > KEYS[k + 1][0]) k++;
@@ -197,7 +201,7 @@
     const fa = focusPt(a[1]), fb = focusPt(b[1]);
     let z = lerp(a[3], b[3], t);
     if (typeof a[1] === 'number' && typeof b[1] === 'number' && a[1] !== b[1]) z -= Math.sin(Math.PI * t) * .9; // pull back mid-flight
-    return { x: lerp(fa[0], fb[0], t), y: lerp(fa[1], fb[1], t), tilt: lerp(a[2], b[2], t), z };
+    return { x: lerp(fa[0], fb[0], t), y: lerp(fa[1], fb[1], t), tilt: lerp(a[2], b[2], t), z, ax: lerp(a[4], b[4], t), ay: lerp(a[5], b[5], t) };
   }
 
   // ---------- layout measurements ----------
@@ -243,7 +247,7 @@
     wall.style.transform = `rotateX(${tear * 58}deg) scale(${1 + tear * .25})`;
     wall.style.opacity = 1 - tear;
     stage.style.setProperty("--url", 1 - clamp(tear * 2));
-    mapwrap.style.opacity = clamp(tear * 1.4);
+    plane.style.setProperty('--mo', clamp(tear * 1.4)); // fade the map's contents, not the 3D container (opacity there flattens the 3D and makes it jump at 100%)
     cue.style.opacity = p < .04 ? 1 : 0;
 
     // camera
@@ -252,11 +256,11 @@
     const s = fit * c.z * (mob ? 1.15 : 1);
     const stopI = p > .29 && p < .45 ? 0 : p >= .45 && p < .63 ? 1 : p >= .63 && p < .82 ? 2 : -1;
     const atOver = p > .86;
-    const ax = mob ? W / 2 : W * (stopI >= 0 ? .4 : atOver ? .33 : .5);
-    const ay = mob ? 60 + (H - 60) * (stopI >= 0 ? .3 : atOver ? .24 : .45) : 60 + (H - 60) * .5;
+    const ax = mob ? W / 2 : W * c.ax;
+    const ay = mob ? 60 + (H - 60) * c.ay : 60 + (H - 60) * .5;
     plane.style.setProperty('--tilt', c.tilt + 'deg');
     plane.style.transform = `translate(${ax}px,${ay}px) rotateX(${c.tilt}deg) scale(${s}) translate(${-c.x}px,${-c.y}px)`;
-    const want = mob ? 30 * clamp(c.z / 2.4, .45, 1) : 44 * clamp(c.z / 1.6, .7, 1); // labels shrink as the camera pulls back so they never pile up
+    const want = mob ? 30 * clamp(c.z / 2.4, .45, 1) : 70 * clamp(c.z / 1.6, .7, 1); // labels shrink as the camera pulls back so they never pile up
     plane.style.setProperty('--ls', (want / (44 * s)).toFixed(3));
     mapwrap.style.perspectiveOrigin = `${ax}px ${ay}px`;
 
@@ -279,9 +283,14 @@
       el.style.transform = `translate(${tx * tear}px, ${ty * tear}px) scale(${lerp(1, sc, tear)})`;
       el.style.opacity = tear >= .98 ? 0 : 1;
     });
-    labs.forEach(l => l.style.opacity = clamp((tear - .9) / .1));
     hlGroups.forEach((g, i) => g.classList.toggle('on', i === stopI));
     pins.forEach((pn, i) => { pn.classList.toggle('on', i === stopI); pn.classList.toggle('dim', stopI >= 0 && i !== stopI); });
+    const lk = mob ? clamp(c.z / 2.4, .45, 1) : clamp(c.z / 1.6, .7, 1), lo = clamp((tear - .9) / .1);
+    labs.forEach((l, i) => {
+      const r = dots[i].getBoundingClientRect();
+      l.style.transform = `translate(${Math.round(r.left + r.width / 2)}px,${Math.round(r.top + r.height / 2 - 16)}px) translate(-50%,-100%) scale(${lk.toFixed(3)})`;
+      l.style.opacity = lo * (stopI >= 0 && i !== stopI ? .55 : 1);
+    });
     colR.style.pointerEvents = flying || tear >= 1 ? 'none' : '';
 
     // interface
